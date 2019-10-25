@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Contains wlt.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function wlt_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the wlt module.
+    case 'help.page.wlt':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Legislation XML parser and renderer') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function wlt_theme() {
+  return [
+    'wlt' => [
+      'render element' => 'children',
+    ],
+  ];
+}

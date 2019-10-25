@@ -1,0 +1,13 @@
+{
+    "name": "wlt",
+    "type": "drupal-module",
+    "description": "Legislation XML parser and renderer",
+    "keywords": [
+    ],
+    "homepage": "https://www.drupal.org/project/wlt",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/wlt",
+        "source": "http://cgit.drupalcode.org/wlt",
+    },
+}

@@ -1,0 +1,7 @@
+wlt.legislation:
+  path: '/primary-legislation'
+  defaults:
+    _controller: '\Drupal\wlt\Controller\LegislationController::content'
+    _title: 'Hey Dudes!'
+  requirements:
+    _permission: 'access content'

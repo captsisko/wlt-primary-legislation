@@ -1,5 +1,5 @@
 wlt.legislation:
-  path: '/primary-legislation'
+  path: '/wlt/form/legislation'
   defaults:
     _controller: '\Drupal\wlt\Controller\LegislationController::content'
     _title: 'Hey Dudes!'
@@ -7,7 +7,7 @@ wlt.legislation:
     _permission: 'access content'
   
 wlt.legislation_form:
-  path: '/wlt/form/legislation'
+  path: '/primary-legislation'
   defaults:
     _form: '\Drupal\wlt\Form\LegislationForm'
     _title: 'LegislationForm'

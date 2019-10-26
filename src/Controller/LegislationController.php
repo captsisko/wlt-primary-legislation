@@ -7,7 +7,7 @@ class LegislationController extends ControllerBase{
 		$xml = \simplexml_load_file('http://www.legislation.gov.uk/primary/data.feed');
 		$size = \sizeof($xml->entry);
 		drupal_set_message("Detecting {$size} entries");
-		dsm($xml);
+		// dsm($xml);
 		
 		$build = [
 			'#markup'=> $this->t('Whaz upppppppp!'),

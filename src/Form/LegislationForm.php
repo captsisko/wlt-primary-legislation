@@ -21,10 +21,11 @@ class LegislationForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    if( !$form_state->has('page_num') ) {
+      $form_state->set('page_num', 0);
+    }
+    $page_num = $form_state->get('page_num');
     $xml = $this->fetchXML();
-
-    dsm( \sizeof( $xml->entry), 'XML Entry');
-    drupal_set_message("TEST: {$xml->xmlns}");
 
     /* foreach ($xml->entry as $key => $value) {
       // dsm($value->children(), 'Value');
@@ -34,23 +35,45 @@ class LegislationForm extends FormBase {
     } */
 
     $form = [];
-    $i = 0;
-    foreach ($xml->entry as $key => $entry) {
-      $form["title_{$i}"] = [
-        '#type' => 'markup',
-        '#markup' =>  "<div><label><b>Title:</b> </label>{$entry->title}</div>"
-      ];
-      $form["{summary_{$i}"] = [
-        '#type' => 'markup',
-        '#markup' =>  "<div><label><b>Summary:</b> </label>{$entry->summary}</div>"
-      ];
-      $i++;
-    }
-
-    $form['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Submit'),
+    $form["number_{$page_num}"] = [
+      '#type' => 'markup',
+      '#markup' =>  "<div><label><b>Number:</b> </label>{$page_num}</div>"
     ];
+    $form["title_{$page_num}"] = [
+      '#type' => 'markup',
+      '#markup' =>  "<div><label><b>Title:</b> </label>{$xml->entry[$page_num]->title}</div>"
+    ];
+    $form["{summary_{$page_num}"] = [
+      '#type' => 'markup',
+      '#markup' =>  "<div><label><b>Summary:</b> </label>{$xml->entry[$page_num]->summary}</div>"
+    ];
+
+    // controls paging backwards using the 'previous' button
+    if( $page_num <= 0 )
+      $next_state = true;
+    else
+      $next_state = false;
+
+    $form['previous'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Previous'),
+      '#submit' => ['::fapiWLTMultistepFormPrevSubmit'],
+      '#disabled'  => $next_state
+    ];
+
+    // controls paging forwards using the 'next' button
+    if( $page_num < \sizeof($xml->entry)-1 )
+      $next_state = false;
+    else
+      $next_state = true;
+    
+    $form['next'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Next'),
+      '#submit' => ['::fapiWLTMultistepFormNextSubmit'],
+      '#disabled'  => $next_state
+    ];
+
 
     return $form;
   }
@@ -58,21 +81,20 @@ class LegislationForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    foreach ($form_state->getValues() as $key => $value) {
-      // @TODO: Validate fields.
-    }
-    parent::validateForm($form, $form_state);
+  public function submitForm(array &$form, FormStateInterface $form_state) {}
+
+  public function fapiWLTMultistepFormNextSubmit(array &$form, FormStateInterface $form_state) {
+    // Display result.
+    $page_state = $form_state->get('page_num');
+    $page_state += 1;
+    $form_state->set('page_num', $page_state)->setRebuild(TRUE);
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function fapiWLTMultistepFormPrevSubmit(array &$form, FormStateInterface $form_state) {
     // Display result.
-    foreach ($form_state->getValues() as $key => $value) {
-      \Drupal::messenger()->addMessage($key . ': ' . ($key === 'text_format'?$value['value']:$value));
-    }
+    $page_state = $form_state->get('page_num');
+    $page_state -= 1;
+    $form_state->set('page_num', $page_state)->setRebuild(TRUE);
   }
 
   private function fetchXML(){

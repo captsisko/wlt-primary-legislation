@@ -5,3 +5,12 @@ wlt.legislation:
     _title: 'Hey Dudes!'
   requirements:
     _permission: 'access content'
+  
+wlt.legislation_form:
+  path: '/wlt/form/legislation'
+  defaults:
+    _form: '\Drupal\wlt\Form\LegislationForm'
+    _title: 'LegislationForm'
+  requirements:
+    _permission: 'access content'
+    # _access: 'TRUE'

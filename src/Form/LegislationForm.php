@@ -26,22 +26,20 @@ class LegislationForm extends FormBase {
     }
     $page_num = $form_state->get('page_num');
     $xml = $this->fetchXML();
-
-    /* foreach ($xml->entry as $key => $value) {
-      // dsm($value->children(), 'Value');
-      drupal_set_message("TITLE: {$value->title}");
-      // drupal_set_message("YEAR: {$value->children('ukm', true)->Year}");
-      drupal_set_message("SUMMARY: {$value->summary}");
-    } */
+    $ns = $xml->getNamespaces(true)['ukm'];
 
     $form = [];
-    $form["number_{$page_num}"] = [
-      '#type' => 'markup',
-      '#markup' =>  "<div><label><b>Number:</b> </label>{$page_num}</div>"
-    ];
     $form["title_{$page_num}"] = [
       '#type' => 'markup',
-      '#markup' =>  "<div><label><b>Title:</b> </label>{$xml->entry[$page_num]->title}</div>"
+      '#markup' =>  "<div><label><b>Title:</b> </label><a href='{$xml->entry[$page_num]->id}' target='_blank'>{$xml->entry[$page_num]->title}</a></div>"
+    ];
+    $form["{number_{$page_num}"] = [
+      '#type' => 'markup',
+      '#markup' =>  "<div><label><b>Number:</b> </label>{$xml->entry[$page_num]->children($ns)->Number->attributes()->Value}</div>"
+    ];
+    $form["{year_{$page_num}"] = [
+      '#type' => 'markup',
+      '#markup' =>  "<div><label><b>Year:</b> </label>{$xml->entry[$page_num]->children($ns)->Year->attributes()->Value}</div>"
     ];
     $form["{summary_{$page_num}"] = [
       '#type' => 'markup',
@@ -74,7 +72,6 @@ class LegislationForm extends FormBase {
       '#disabled'  => $next_state
     ];
 
-
     return $form;
   }
 
@@ -103,8 +100,9 @@ class LegislationForm extends FormBase {
     // $xml = \simplexml_load_file('data.xml');// or die('Failed to load');
     // $xml = \simplexml_load_string('data.xml');// or die('Failed to load');
 		// $size = \sizeof($xml->entry);
-		// drupal_set_message("Detecting {$size} entries");
-    // dsm($xml, 'Feed');
+    // drupal_set_message("Detecting {$size} entries");
+    // $ns = $xml->getNamespaces(true);
+    // dsm($ns, 'Name Spaces');
     return $xml;
   }
 
